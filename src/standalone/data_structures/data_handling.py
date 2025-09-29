@@ -3,8 +3,8 @@ from typing import Any, List, Tuple
 import pandas as pd
 import os
 from cloudpathlib import CloudPath
-from data_structures.bytes import read_bytes
-from data_structures.response_schemas import (
+from prompt_optimization.io.bytes import read_bytes
+from standalone.data_structures.response_schemas import (
     AbsoluteScope1EmissionsSchema,
     Scope3EmissionsAssuranceSchema,
     ReportingPeriodSchema,
@@ -48,6 +48,9 @@ class DataLoader(BaseModel):
             raise exc
 
     def get_overlapping_filepaths_csv_gcp(self) -> list:
+        """
+        Given a ground truth csv file and a cloud storage bucket, this function returns the reports exist on GCP.
+        """
         # We need this helper function to identify which anonymised repors appear in ground truth.
         try:
             # Load CSV file and extract filepaths
@@ -204,55 +207,3 @@ class DataLoader(BaseModel):
             input_data = InputData(doc_id=doc_id, doc=doc, ground_truth=ground_truth)
             input_list.append(input_data)
         return input_list
-
-    def get_input_data_for_scope1_emissions_with_filesizes(
-        self,
-    ) -> Tuple[List[InputData], Any, Any]:
-        # self.copy_gt_file_gsutil()
-        common_filepaths, df_ground_truth = self.get_overlapping_filepaths_csv_gcp()
-        input_list = []
-        file_sizes = {}
-        pages = {}
-
-        import io
-        from PyPDF2 import PdfReader
-
-        for filepath in common_filepaths:
-            # print(f"\nWorking with file: {filepath}")
-            # Display ground truth values
-            gt_entry = df_ground_truth.loc[
-                df_ground_truth["file_path"] == filepath
-            ].iloc[0]
-            # drop part files and not 2023 files.
-            if gt_entry.reporting_year != 2023:
-                continue
-            filename = filepath.split("/")[-1]
-            if "_part" in filename:
-                continue
-            # print(f"* Ground truth. reporting_year: {gt_entry.reporting_year}, scope1_emissions: {gt_entry.scope1_emissions}, scope1_comments: {gt_entry.scope1_comments}")
-            # we will use filepath as unique id.
-            path = f"gs://{self.bucket_name_pdf}/{filepath}"
-            file_size = CloudPath(cloud_path=path).stat().st_size
-            # skip if file size is bigger than 40 mb.
-            if file_size > 48 * 1024 * 1024:
-                continue
-            ground_truth = float(gt_entry.scope1_emissions)
-            if pd.isna(ground_truth):
-                ground_truth = None
-            ground_truth = AbsoluteScope1EmissionsSchema(
-                total_scope1_emissions=ground_truth
-            )
-            dt = read_bytes(path)
-            doc = genai.types.Part.from_bytes(
-                data=dt,
-                mime_type="application/pdf",
-            )
-            doc_id = filepath
-            # create a new input data object
-            input_data = InputData(doc_id=doc_id, doc=doc, ground_truth=ground_truth)
-            input_list.append(input_data)
-            reader = PdfReader(io.BytesIO(dt))
-            num_pages = len(reader.pages)
-            pages[doc_id] = num_pages
-            file_sizes[doc_id] = file_size
-        return input_list, file_sizes, pages

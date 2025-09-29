@@ -1,22 +1,35 @@
+# ---
+# jupyter:
+#   jupytext:
+#     cell_metadata_filter: -all
+#     custom_cell_magics: kql
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.11.2
+# ---
+
+# %%
 import os
 from pydantic import BaseModel, create_model, Field
-from data_structures.prompt import Prompt
-from data_structures.generation_model import GenerationModel
-from data_structures.data_handling import OutputData, InputData
+from standalone.data_structures.prompt import Prompt
+from standalone.generation_model import GenerationModel
+from standalone.data_structures.data_handling import OutputData, InputData
 import re
 from typing import List, Callable, Tuple, Any
 import concurrent.futures
 import logging
 import traceback
 from logging import Logger
-from data_structures.prompt_result import TrainingStatistics
-from evaluator import Evaluator
+from standalone.data_structures.prompt_result import TrainingStatistics
+from standalone.evaluator import Evaluator
 import pandas as pd
 from itertools import combinations
 import pulp
 from collections import defaultdict, OrderedDict
 
-from data_structures.smart_prompt_config import (
+from standalone.data_structures.smart_prompt_config import (
     GROUP_PROMPTS_LLM,
     IDENTIFY_CONTRADICTIONS_PROMPT,
     ASSESS_SIMILARITY_PROMPT,
@@ -791,56 +804,6 @@ class SmartOptimizer(BaseModel):
             dbg_msg = f"{dbg_msg}\n{_}"
         self.logger.custom(dbg_msg)
         return contradicting
-
-    """def filter_contradictions_using_llm(
-        self,
-        instructions: List[str],
-        instruction_scores: List[float],
-        baseline_score: float,
-    ) -> Tuple[List[str], float]:
-        self.logger.custom("Starting contradiction filtering")
-        are_pairs_contradicting = self.__identify_contradictions_using_llm(
-            instructions=instructions
-        )
-        self.logger.custom(
-            "Starting linear programming optimization of the contradiction graph."
-        )
-        scores = {
-            instruction: score
-            for instruction, score in zip(
-                instructions, [score - baseline_score for score in instruction_scores]
-            )
-        }
-        contradicting_pairs = {
-            key
-            for key in are_pairs_contradicting.keys()
-            if are_pairs_contradicting[key]
-        }
-        print(scores)
-        print(contradicting_pairs)
-        self.logger.custom(
-            f"Contradicting pairs entering elimination: {contradicting_pairs}"
-        )
-        m = pulp.LpProblem("Maximum_Weight_Independent_Set", pulp.LpMaximize)
-        keep = {
-            instruction: pulp.LpVariable(f"keep_{instruction}", 0, 1, cat="Binary")
-            for instruction in scores
-        }
-        m += pulp.lpSum(
-            scores[instruction] * keep[instruction] for instruction in scores
-        )
-        for i, j in contradicting_pairs:
-            m += keep[i] + keep[j] <= 1, f"no_{i}_with{j}"
-        print(m)
-        m.solve(pulp.PULP_CBC_CMD(msg=False))
-        selected = [
-            instruction for instruction in scores if pulp.value(keep[instruction]) > 0.5
-        ]
-        total_score = sum(scores[instruction] for instruction in selected)
-        self.logger.custom(
-            f"Linear optimization of the contradiction graph finished. Best score bonus: {total_score}, \nSelected instructions: {selected}"
-        )
-        return selected, total_score"""
 
     def filter_contradictions_using_llm(
         self,

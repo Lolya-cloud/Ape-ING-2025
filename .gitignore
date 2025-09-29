@@ -1,0 +1,9 @@
+*.ipynb
+.idea/
+__pycache__
+.ipynb_checkpoints
+.env
+.terraform
+*.tfstate
+*.tfstate.backup
+

@@ -1,5 +1,5 @@
 from google import genai
-from scripts.google_genai_client import init_google_genai_client
+from prompt_optimization.client.google_genai_client import init_google_genai_client
 import time
 import asyncio
 import nest_asyncio

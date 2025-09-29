@@ -1,8 +1,8 @@
 from pydantic import BaseModel
-from data_structures.prompt import Prompt
-from data_structures.generation_model import GenerationModel
-from data_structures.prompt_result import PromptResultLite, ProcessedDocument
-from data_structures.data_handling import OutputData, InputData
+from standalone.data_structures.prompt import Prompt
+from standalone.generation_model import GenerationModel
+from standalone.data_structures.prompt_result import PromptResultLite, ProcessedDocument
+from standalone.data_structures.data_handling import OutputData, InputData
 from typing import List, Callable, Tuple, Optional, Any
 import concurrent.futures
 from logging import Logger

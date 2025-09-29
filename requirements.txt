@@ -1,0 +1,12 @@
+google-genai
+cloudpathlib
+numpy
+pandas
+pydantic
+tqdm
+statsmodels
+scipy
+matplotlib
+seaborn
+nest-asyncio
+pulp

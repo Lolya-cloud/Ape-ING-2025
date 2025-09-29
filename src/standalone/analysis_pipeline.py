@@ -9,11 +9,10 @@ from scipy.stats import binomtest, wilcoxon
 from scipy import stats
 import matplotlib.pyplot as plt
 import seaborn as sns
-
-from data_structures.prompt import Prompt
-from scripts.evaluator import Evaluator
-from data_structures.data_handling import InputData
-from data_structures.prompt_result import PromptResultLite, PromptResult
+from standalone.data_structures.prompt import Prompt
+from standalone.evaluator import Evaluator
+from standalone.data_structures.data_handling import InputData
+from standalone.data_structures.prompt_result import PromptResultLite, PromptResult
 
 
 class AnalysisPipeline(BaseModel):
@@ -26,19 +25,6 @@ class AnalysisPipeline(BaseModel):
     evaluator: "Evaluator" = None
     best_prompt: "Prompt" = None
     results_folder: str = None
-
-    """def fix_prompt_results(self):
-        dir_starting, dir_optimized, _ = (
-            self.__get_persistence_dirs_create_if_not_exist()
-        )
-        for i in range(10):
-            file_name = f"{i + 1}.json"
-            path = os.path.join(dir_starting, file_name)
-
-            PromptResult.load_from_json(path).to_lite().save_to_json(path)
-
-            path = os.path.join(dir_optimized, file_name)
-            PromptResult.load_from_json(path).to_lite().save_to_json(path)"""
 
     def __init__(self, **data):
         super().__init__(**data)
@@ -101,7 +87,7 @@ class AnalysisPipeline(BaseModel):
         print("Prompts performance and hypotheses testing: ")
         print(df.to_string(index=False))
         # parents plot
-        self.save_plot_parent_accuracy()
+        # self.save_plot_parent_accuracy()
 
         # persistence in eval and response
         self.analyze_persistence_in_response_and_eval()

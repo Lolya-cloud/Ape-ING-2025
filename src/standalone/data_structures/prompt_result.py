@@ -1,7 +1,7 @@
 from pydantic import BaseModel
-from data_structures.prompt import Prompt
-from data_structures.data_handling import OutputData
-from data_structures.generation_model import GenerationModel
+from standalone.data_structures.prompt import Prompt
+from standalone.data_structures.data_handling import OutputData
+from standalone.generation_model import GenerationModel
 from typing import List, Any
 import json
 import pandas as pd

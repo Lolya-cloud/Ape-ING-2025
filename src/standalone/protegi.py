@@ -1,12 +1,12 @@
 from pydantic import BaseModel
 from typing import ClassVar
-from data_structures.prompt import Prompt
-from data_structures.generation_model import GenerationModel
-from data_structures.prompt_result import (
+from standalone.data_structures.prompt import Prompt
+from standalone.generation_model import GenerationModel
+from standalone.data_structures.prompt_result import (
     TrainingStatistics,
 )
-from scripts.evaluator import Evaluator
-from data_structures.data_handling import OutputData, InputData
+from standalone.evaluator import Evaluator
+from standalone.data_structures.data_handling import OutputData, InputData
 import re
 import random
 from typing import List, Callable, Tuple, Optional, Any
@@ -17,7 +17,7 @@ from logging import Logger
 import numpy as np
 import traceback
 
-from data_structures.prompt_config import (
+from standalone.data_structures.prompt_config import (
     GRADIENT_DESCENT_PROMPT,
     INCORPORATING_GRADIENT_FEEDBACK_PROMPT,
     PARAPHRASE_PROMPT,
