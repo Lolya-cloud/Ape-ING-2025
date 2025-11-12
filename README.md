@@ -19,13 +19,3 @@ pip install -r requirements.txt
 
 # 3) Run the example optimization workflow
 python notebooks/example_usage.py
-
-Entry point
-
-For an example of the optimization workflow see notebooks/example_usage.py.
-
-Notes
-
-Configure any required API keys or environment variables as described in your local setup.
-
-Results and intermediate artifacts (if any) should be written to your chosen output directory (update paths in the example as needed).
